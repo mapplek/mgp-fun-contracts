@@ -6,8 +6,8 @@ module.exports = {
   solidity: "0.8.19",
 
   networks: {
-    mumbai: {
-      url: "https://polygon-mumbai.infura.io/v3/" + process.env.INFURA_KEY,
+    mainnet: {
+      url: "https://polygon-mainnet.infura.io/v3/" + process.env.INFURA_KEY,
       accounts: [`${process.env.PRIVATE_KEY}`],
     },
     hardhat: {
@@ -22,7 +22,7 @@ module.exports = {
 };
 
 // command to deploy with arguments
-// # npx hardhat run --network mumbai scripts/deploy_mgp.js
+// # npx hardhat run --network mainnet scripts/deploy_mgp.js
 
 // command to verify
-// # npx hardhat verify <Contract Address> --network mumbai <arg1> <arg2>
+// # npx hardhat verify <Contract Address> --network mainnetc <arg1> <arg2>
