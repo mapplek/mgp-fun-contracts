@@ -17,12 +17,27 @@ describe("Validation execute permission for functions", function() {
         await expect(token.connect(owner).setCostForMint("10000000000000000")).not.to.be.reverted;
         await expect(token.connect(others.rest[0]).setCostForMint("10000000000000000")).to.be.reverted;
     });
+
+    it("Validation to authorize execution setBalanceRatioForDevWallet", async function() {
+        const { token, owner, ...others } = await loadFixture(deployFixture);
+
+        await expect(token.connect(owner).setBalanceRatioForDevWallet("5")).not.to.be.reverted;
+        await expect(token.connect(others.rest[0]).setBalanceRatioForDevWallet("5")).to.be.reverted;
+        await expect(token.connect(owner).setBalanceRatioForDevWallet("101")).to.be.reverted;
+    });
     
     it("Validation to authorize execution setWithdrawAddress", async function() {
         const { token, owner, ...others } = await loadFixture(deployFixture);
 
         await expect(token.connect(owner).setWithdrawAddress("0xF2b12AAa4410928eB8C1a61C0a7BB0447b930303")).not.to.be.reverted;
         await expect(token.connect(others.rest[0]).setWithdrawAddress("0xF2b12AAa4410928eB8C1a61C0a7BB0447b930303")).to.be.reverted;
+    });
+
+    it("Validation to authorize execution setDeveloperAddress", async function() {
+        const { token, owner, ...others } = await loadFixture(deployFixture);
+
+        await expect(token.connect(owner).setDeveloperAddress("0xF2b12AAa4410928eB8C1a61C0a7BB0447b930303")).not.to.be.reverted;
+        await expect(token.connect(others.rest[0]).setDeveloperAddress("0xF2b12AAa4410928eB8C1a61C0a7BB0447b930303")).to.be.reverted;
     });
     
     it("Validation to authorize execution setRenderer", async function() {

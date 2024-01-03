@@ -24,6 +24,7 @@ contract MachinegunGirlsPassFun is
     // Error functions
     error CallerIsNotUser(address);
     error InsufficientBalance(uint256);
+    error InvalidRatio(uint128);
     error NotMinted();
     error NotTokenOwner(uint256, address);
     error OverNameLength(string);
@@ -41,12 +42,14 @@ contract MachinegunGirlsPassFun is
     bytes32 public constant ADMIN  = keccak256('ADMIN');
 
     // Mint Parameters
-    uint256 public costForMint = 10000000000000000000;
+    uint128 public balanceRatioForDevWallet = 30;  // 0-100
+    uint128 public costForMint = 10000000000000000000;
     mapping(address => TokenData) public _tokenData;
     mapping(uint256 => string) public userPassName;
 
     // Addresses
-    address payable public withdrawAddress = payable(0xF2b12AAa4410928eB8C1a61C0a7BB0447b930303);
+    address payable public withdrawAddress = payable(0x1a2f4bB65b98A294ce342b64e99667cd149b7caf);
+    address payable public developerAddress = payable(0xF2b12AAa4410928eB8C1a61C0a7BB0447b930303);
 
     PassRenderer public renderer;
 
@@ -62,11 +65,18 @@ contract MachinegunGirlsPassFun is
     /**
      * Setter functions
      */
-    function setCostForMint(uint256 _cost)
+    function setCostForMint(uint128 _cost)
         external
         onlyRole(ADMIN)
     {
         costForMint = _cost;
+    }
+
+    function setDeveloperAddress(address payable value)
+        public
+        onlyRole(ADMIN)
+    {
+        developerAddress = value;
     }
 
     function setWithdrawAddress(address payable value)
@@ -74,6 +84,17 @@ contract MachinegunGirlsPassFun is
         onlyRole(ADMIN)
     {
         withdrawAddress = value;
+    }
+
+    function setBalanceRatioForDevWallet(uint128 _ratio)
+        public
+        onlyRole(ADMIN)
+    {
+        if (_ratio < 0 || 100 < _ratio) {
+            revert InvalidRatio(_ratio);
+        }
+
+        balanceRatioForDevWallet = _ratio;
     }
 
     function setRenderer(PassRenderer _renderer)
@@ -224,6 +245,11 @@ contract MachinegunGirlsPassFun is
         payable
         onlyRole(ADMIN)
     {
+        // withdrawing for dev wallet according to balance ratio
+        (bool dev, ) = payable(developerAddress).call{value: address(this).balance * balanceRatioForDevWallet / 100}('');
+        require(dev);
+
+        // withdrawing for dao wallet remainder
         (bool os, ) = payable(withdrawAddress).call{value: address(this).balance}('');
         require(os);
     }
