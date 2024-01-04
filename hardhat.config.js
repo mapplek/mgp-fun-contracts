@@ -25,4 +25,4 @@ module.exports = {
 // # npx hardhat run --network mainnet scripts/deploy_mgp.js
 
 // command to verify
-// # npx hardhat verify <Contract Address> --network mainnetc <arg1> <arg2>
+// # npx hardhat verify <Contract Address> --network mainnet <arg1> <arg2>
